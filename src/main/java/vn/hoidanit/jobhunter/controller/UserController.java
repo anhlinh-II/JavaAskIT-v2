@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.service.UserService;
-import vn.hoidanit.jobhunter.service.error.IdInvalidException;
+import vn.hoidanit.jobhunter.util.error.IdInvalidException;
 
 @RestController
 public class UserController {
@@ -35,6 +35,8 @@ public class UserController {
         User ericUser = this.userService.handleCreateUser(postManUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(ericUser);
     }
+
+    // some comments
 
     @DeleteMapping("/users/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable("id") long id)
