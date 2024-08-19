@@ -37,7 +37,6 @@ public class AuthController {
           //xác thực người dùng => cần viết hàm loadUserByUsername
           Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
           //nạp thông tin (nếu xử lý thành công) vào SecurityContext
-          // SecurityContextHolder.getContext().setAuthentication(authentication);
           // comment because this line of code doesn't exist in the video
 
           // create a token
