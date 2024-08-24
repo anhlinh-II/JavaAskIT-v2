@@ -43,9 +43,10 @@ public class User {
      private int age;
 
      @Enumerated(EnumType.STRING)
-     @Column(name = "gender", length = 45)
      private GenderEnum gender;
      private String address;
+
+     @Column(columnDefinition = "MEDIUMTEXT")
      private String refreshToken;
      private Instant createdAt;
      private Instant updatedAt;
