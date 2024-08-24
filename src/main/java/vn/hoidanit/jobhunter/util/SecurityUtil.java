@@ -62,7 +62,7 @@ public class SecurityUtil {
         }
     }
 
-    public String createAccessToken(Authentication authentication, ResLoginDTO.UserLogin dto) {
+    public String createAccessToken(String email, ResLoginDTO.UserLogin dto) {
         Instant now = Instant.now();
         Instant validity = now.plus(this.accessTokenExpiration, ChronoUnit.SECONDS);
 
@@ -76,7 +76,7 @@ public class SecurityUtil {
           JwtClaimsSet claims = JwtClaimsSet.builder()
           .issuedAt(now)
           .expiresAt(validity)
-          .subject(authentication.getName())
+          .subject(email)
           .claim("user", dto)
           .claim("permission", listAuthority)
           .build();
