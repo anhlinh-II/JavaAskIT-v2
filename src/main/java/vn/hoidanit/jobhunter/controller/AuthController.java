@@ -91,7 +91,7 @@ public class AuthController {
                     .header(HttpHeaders.SET_COOKIE, resCookie.toString())
                     .body(res);
 
-     }
+     }g
 
      @GetMapping("/auth/account")
      @ApiMessage("fetch account")
@@ -114,8 +114,8 @@ public class AuthController {
      @GetMapping("/auth/refresh")
      @ApiMessage("get user by refresh token")
      public ResponseEntity<ResLoginDTO> getRefreshToken(
-          @CookieValue(name = "refresh_token", defaultValue = "abc") String refresh_token
-     ) throws IdInvalidException {
+               @CookieValue(name = "refresh_token", defaultValue = "abc") String refresh_token)
+               throws IdInvalidException {
           if (refresh_token.equals("abc")) {
                throw new IdInvalidException("you don't have refresh token in cookies");
           }
@@ -125,17 +125,17 @@ public class AuthController {
 
           // check user by token + email
           User currentUser = this.userService.getUserByRefreshTokenAndEmail(refresh_token, email);
-          if(currentUser == null) {
+          if (currentUser == null) {
                throw new IdInvalidException("Refresh Token is not valid");
           }
           // issue new token / set refresh token as cookies
           ResLoginDTO res = new ResLoginDTO();
 
-          // User currentUserDB = this.userService
-          //           .handleGetUserByUsername(loginDTO.getUsername());
-          if (currentUser != null) {
-               ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(currentUser.getId(),
-                         currentUser.getEmail(), currentUser.getName());
+          User currentUserDB = this.userService
+          .handleGetUserByUsername(email);
+          if (currentUserDB != null) {
+               ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(currentUserDB.getId(),
+                         currentUserDB.getEmail(), currentUserDB.getName());
                res.setUser(userLogin);
           }
 
@@ -161,6 +161,36 @@ public class AuthController {
           return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, resCookie.toString())
                     .body(res);
+     }
+
+     @PostMapping("/auth/logout")
+     @ApiMessage("Logout success")
+     public ResponseEntity<Void> logout() throws IdInvalidException {
+          String email = SecurityUtil.getCurrentUserLogin().isPresent()
+                    ? SecurityUtil.getCurrentUserLogin().get()
+                    : "";
+
+          if (email.equals("")) {
+               throw new IdInvalidException("Access token is not valid");
+          }
+          
+          // update refresh token = null
+          this.userService.updateUserToken(null, email);
+
+          // remove fresh token from cookie`
+          ResponseCookie deleteSpringCookie = ResponseCookie
+                    .from("refresh_token", null)
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/")
+                    .maxAge(0)
+                    .build();
+
+          return ResponseEntity
+                    .ok()
+                    .header(HttpHeaders.SET_COOKIE, deleteSpringCookie.toString())
+                    .build();
+
      }
 
 }
