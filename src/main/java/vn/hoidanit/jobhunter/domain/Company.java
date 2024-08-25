@@ -37,27 +37,27 @@ public class Company {
      private String logo;
 
      // @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
-     private Instant createAt;
+     private Instant createdAt;
 
-     private Instant updateAt;
+     private Instant updatedAt;
 
-     private String createBy;
+     private String createdBy;
 
-     private String updateBy;
+     private String updatedBy;
 
      @PrePersist
      public void handleBeforeCreatedAt() {
-          this.createBy = SecurityUtil.getCurrentUserLogin().isPresent() == true
+          this.createdBy = SecurityUtil.getCurrentUserLogin().isPresent() == true
                ? SecurityUtil.getCurrentUserLogin().get()
                : "";
-          this.createAt = Instant.now();
+          this.createdAt = Instant.now();
      }
 
      @PreUpdate
      public void handleBeforeUpdate() {
-          this.createBy = SecurityUtil.getCurrentUserLogin().isPresent() == true
+          this.createdBy = SecurityUtil.getCurrentUserLogin().isPresent() == true
           ? SecurityUtil.getCurrentUserLogin().get()
           : "";
-          this.createAt = Instant.now();
+          this.createdAt = Instant.now();
      }
 }

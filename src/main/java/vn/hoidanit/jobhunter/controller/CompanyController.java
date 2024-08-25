@@ -13,7 +13,7 @@ import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
 import vn.hoidanit.jobhunter.domain.Company;
-import vn.hoidanit.jobhunter.domain.dto.ResultPaginationDTO;
+import vn.hoidanit.jobhunter.domain.response.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.service.CompanyService;
 import vn.hoidanit.jobhunter.util.annotation.ApiMessage;
 
@@ -39,13 +39,11 @@ public class CompanyController {
 
      @GetMapping("/companies")
      @ApiMessage("fetch companies")
-     public ResponseEntity<ResultPaginationDTO> getAllCompany(
+     public ResponseEntity<ResultPaginationDTO> getCompany(
           @Filter Specification<Company> spec,
           Pageable pageable
      ) {
-          
-          ResultPaginationDTO listCompany = companyService.handleFetchListCompany(spec, pageable);
-          return ResponseEntity.ok().body(listCompany);
+          return ResponseEntity.ok(this.companyService.handleGetCompany(spec, pageable));
      }
 
      @PutMapping("/companies")

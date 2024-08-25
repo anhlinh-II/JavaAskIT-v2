@@ -1,4 +1,4 @@
-package vn.hoidanit.jobhunter.domain;
+package vn.hoidanit.jobhunter.domain.response;
 
 import lombok.Getter;
 import lombok.Setter;

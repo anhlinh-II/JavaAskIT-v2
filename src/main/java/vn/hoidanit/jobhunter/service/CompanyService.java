@@ -1,5 +1,6 @@
 package vn.hoidanit.jobhunter.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -8,62 +9,52 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import vn.hoidanit.jobhunter.domain.Company;
-import vn.hoidanit.jobhunter.domain.dto.Meta;
-import vn.hoidanit.jobhunter.domain.dto.ResultPaginationDTO;
+import vn.hoidanit.jobhunter.domain.response.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.repository.CompanyRepository;
 
 @Service
 public class CompanyService {
-     private final CompanyRepository companyRepository;
 
-     public CompanyService(CompanyRepository companyRepository) {
-          this.companyRepository = companyRepository;
-     }
+    private final CompanyRepository companyRepository;
 
-     public Company handleCreateCompany(Company company) {
-          return this.companyRepository.save(company);
-     }
+    public CompanyService(CompanyRepository companyRepository) {
+        this.companyRepository = companyRepository;
+    }
 
-     public ResultPaginationDTO handleFetchListCompany(Specification<Company> spec, Pageable pageable) {
-          Page<Company> companyPage = this.companyRepository.findAll(spec, pageable);
-          ResultPaginationDTO res = new ResultPaginationDTO();
-          Meta mt = new Meta();
+    public Company handleCreateCompany(Company c) {
+        return this.companyRepository.save(c);
+    }
 
-          mt.setPage(pageable.getPageNumber() + 1);
-          mt.setPageSize(pageable.getPageSize());
-          
-          mt.setPage(companyPage.getTotalPages());
-          mt.setTotal(companyPage.getTotalElements());
+    public ResultPaginationDTO handleGetCompany(Specification<Company> spec, Pageable pageable) {
+        Page<Company> pCompany = this.companyRepository.findAll(spec, pageable);
+        ResultPaginationDTO rs = new ResultPaginationDTO();
+        ResultPaginationDTO.Meta mt = new ResultPaginationDTO.Meta();
 
-          res.setMeta(mt);
-          res.setResult(companyPage.getContent());
+        mt.setPage(pageable.getPageNumber() + 1);
+        mt.setPageSize(pageable.getPageSize());
 
-          return res;
-     }
+        mt.setPages(pCompany.getTotalPages());
+        mt.setTotal(pCompany.getTotalElements());
 
-     public Company fetchCompanyById(Long id) {
-          Optional<Company> optionalCompany = this.companyRepository.findById(id);
-          if (optionalCompany.isPresent()) {
-               return optionalCompany.get();
-          }
-          return null;
-     }
+        rs.setMeta(mt);
+        rs.setResult(pCompany.getContent());
+        return rs;
+    }
 
-     public Company handleUpdateCompany(Company company) {
-          Long id = company.getId();
-          Company currentCompany = this.companyRepository.findById(id).get();
+    public Company handleUpdateCompany(Company c) {
+        Optional<Company> companyOptional = this.companyRepository.findById(c.getId());
+        if (companyOptional.isPresent()) {
+            Company currentCompany = companyOptional.get();
+            currentCompany.setLogo(c.getLogo());
+            currentCompany.setName(c.getName());
+            currentCompany.setDescription(c.getDescription());
+            currentCompany.setAddress(c.getAddress());
+            return this.companyRepository.save(currentCompany);
+        }
+        return null;
+    }
 
-          if (currentCompany != null) {
-               currentCompany.setAddress(company.getAddress());
-               currentCompany.setDescription(company.getDescription());
-               currentCompany.setName(company.getName());
-               currentCompany.setId(company.getId());
-               currentCompany.setLogo(company.getLogo());
-          }
-          return this.companyRepository.save(currentCompany);
-     }
-
-     public void handleDeleteCompany(Long id) {
-          this.companyRepository.deleteById(id);
-     }
+    public void handleDeleteCompany(long id) {
+        this.companyRepository.deleteById(id);
+    }
 }
