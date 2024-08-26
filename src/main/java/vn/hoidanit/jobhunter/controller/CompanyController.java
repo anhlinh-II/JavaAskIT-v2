@@ -31,6 +31,7 @@ public class CompanyController {
           this.companyService = companyService;
      }
 
+     @ApiMessage("create a company successfully")
      @PostMapping("/companies")
      public ResponseEntity<Company> createCompany(@RequestBody @Valid Company postManCompany) {
           Company reqCompany = this.companyService.handleCreateCompany(postManCompany);
@@ -53,9 +54,9 @@ public class CompanyController {
      }
 
      @DeleteMapping("/companies/{id}")
-     public ResponseEntity<Void> deleteCompany(@PathVariable("id") Long id) {
+     public ResponseEntity<String> deleteCompany(@PathVariable("id") Long id) {
           this.companyService.handleDeleteCompany(id);
-          return ResponseEntity.noContent().build();
+          return ResponseEntity.ok().body("delete ok");
      }
 
 }
