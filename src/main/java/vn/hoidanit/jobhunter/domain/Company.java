@@ -51,7 +51,11 @@ public class Company {
 
      @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
      @JsonIgnore
-     private List<User> users;
+     List<User> users;
+
+     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+     @JsonIgnore
+     List<Job> jobs;
 
      @PrePersist
      public void handleBeforeCreatedAt() {
