@@ -7,9 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import jakarta.validation.Valid;
 import vn.hoidanit.jobhunter.domain.Skill;
-import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.response.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.repository.SkillRepository;
 import vn.hoidanit.jobhunter.util.error.IdInvalidException;
@@ -22,33 +20,20 @@ public class SkillService {
           this.skillRepository = skillRepository;
      }
 
-     public Skill handleCreateSkill(Skill createSkill) throws IdInvalidException {
-          Skill currentSkill = this.skillRepository.findByName(createSkill.getName());
-          if (currentSkill != null) {
-               throw new IdInvalidException("This skill is existed");
-          }
-          return this.skillRepository.save(createSkill);
-     }
-
-     public Skill findSkillById(Skill skill) throws IdInvalidException {
-          if (skill.getId() == null) {
-               throw new IdInvalidException("Id is being null");
-          }
-          Optional<Skill> optionalSkill = this.skillRepository.findById(skill.getId());
+     public Skill fetchSkillById(long id) {
+          Optional<Skill> optionalSkill = this.skillRepository.findById(id);
           if (optionalSkill.isPresent()) {
                return optionalSkill.get();
           }
           return null;
      }
 
-     public Skill handleUpdateSkill(Skill updateSkill) throws IdInvalidException {
-          Skill skill = this.findSkillById(updateSkill);
-          if (updateSkill != null) {
-               skill.setId(updateSkill.getId());
-               skill.setName(updateSkill.getName());
-               return this.skillRepository.save(skill);
-          }
-          return skill;
+     public Skill handleCreateSkill(Skill createSkill) throws IdInvalidException {
+          return this.skillRepository.save(createSkill);
+     }
+
+     public Skill updateSkill(Skill s) throws IdInvalidException {
+          return this.skillRepository.save(s);
      }
 
      public ResultPaginationDTO fetchAllSkill(Specification<Skill> spec, Pageable pageable) {
@@ -64,7 +49,20 @@ public class SkillService {
 
           res.setMeta(meta);
 
-          res.setResult(pageSkill);
+          res.setResult(pageSkill.getContent());
           return res;
+     }
+
+     public boolean isNameExist(String name) {
+          return this.skillRepository.existsByName(name);
+     }
+
+     public void deleteSkill(long id) {
+          Optional<Skill> optionalSkill = this.skillRepository.findById(id);
+          Skill currentSkill = optionalSkill.get();
+          currentSkill.getJobs().forEach(job -> job.getSkills().remove(currentSkill));
+
+          // delete skill
+          this.skillRepository.delete(currentSkill);
      }
 }
