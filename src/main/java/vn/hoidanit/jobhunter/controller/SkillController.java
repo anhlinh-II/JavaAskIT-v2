@@ -15,14 +15,13 @@ import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
 import vn.hoidanit.jobhunter.domain.Skill;
-import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.response.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.service.SkillService;
 import vn.hoidanit.jobhunter.util.annotation.ApiMessage;
 import vn.hoidanit.jobhunter.util.error.IdInvalidException;
 
 @RestController
-@RequestMapping("/api/v1/skill")
+@RequestMapping("/api/v1/skills")
 public class SkillController {
 
      private final SkillService skillService;
