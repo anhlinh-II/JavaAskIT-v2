@@ -58,8 +58,8 @@ public class CompanyService {
         return null;
     }
 
-    public Optional<Company> findById(Company company) {
-        return this.companyRepository.findById(company.getId());
+    public Optional<Company> findById(long id) {
+        return this.companyRepository.findById(id);
     }
 
     public void handleDeleteCompany(Long id) {

@@ -1,5 +1,7 @@
 package vn.hoidanit.jobhunter.controller;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -41,9 +43,8 @@ public class CompanyController {
      @GetMapping("/companies")
      @ApiMessage("fetch companies")
      public ResponseEntity<ResultPaginationDTO> getCompany(
-          @Filter Specification<Company> spec,
-          Pageable pageable
-     ) {
+               @Filter Specification<Company> spec,
+               Pageable pageable) {
           return ResponseEntity.ok(this.companyService.handleGetCompany(spec, pageable));
      }
 
@@ -57,6 +58,13 @@ public class CompanyController {
      public ResponseEntity<String> deleteCompany(@PathVariable("id") Long id) {
           this.companyService.handleDeleteCompany(id);
           return ResponseEntity.ok().body("delete ok");
+     }
+
+     @GetMapping("/companies/{id}")
+     @ApiMessage("fetch company by id")
+     public ResponseEntity<Company> fetchCompanyById(@PathVariable("id") long id) {
+          Optional<Company> cOptional = this.companyService.findById(id);
+          return ResponseEntity.ok().body(cOptional.get());
      }
 
 }

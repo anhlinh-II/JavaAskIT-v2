@@ -44,19 +44,21 @@ public class JobController {
      }
 
      @PutMapping
-     @ApiMessage("update a job")
-     public ResponseEntity<ResUpdateJobDTO> update(@RequestBody @Valid Job postmanJob) throws IdInvalidException {
-          Optional<Job> currentJob = this.jobService.finJobById(postmanJob.getId());
+     @ApiMessage("Update a job")
+     public ResponseEntity<ResUpdateJobDTO> update(@Valid @RequestBody Job job) throws IdInvalidException {
+          Optional<Job> currentJob = this.jobService.fetchJobById(job.getId());
           if (!currentJob.isPresent()) {
-               throw new IdInvalidException("job not found");
+               throw new IdInvalidException("Job not found");
           }
-          return ResponseEntity.ok(this.jobService.updateJob(postmanJob));
+
+          return ResponseEntity.ok()
+                    .body(this.jobService.update(job, currentJob.get()));
      }
 
      @DeleteMapping("/{id}")
      @ApiMessage("delete a job")
      public ResponseEntity<Void> delete(@RequestParam("id") Long id) throws IdInvalidException {
-          Optional<Job> currentJob = this.jobService.finJobById(id);
+          Optional<Job> currentJob = this.jobService.fetchJobById(id);
           if (!currentJob.isPresent()) {
                throw new IdInvalidException("id" + id + " is not found");
           }
@@ -67,7 +69,7 @@ public class JobController {
      @GetMapping("/{id}")
      @ApiMessage("get job by id")
      public ResponseEntity<Job> getJob(@RequestParam("id") long id) throws IdInvalidException {
-          Optional<Job> optionalJob = this.jobService.finJobById(id);
+          Optional<Job> optionalJob = this.jobService.fetchJobById(id);
           if (!optionalJob.isPresent()) {
                throw new IdInvalidException("id is not found");
           }

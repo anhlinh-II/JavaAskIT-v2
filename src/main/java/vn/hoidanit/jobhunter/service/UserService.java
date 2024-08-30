@@ -30,10 +30,12 @@ public class UserService {
     }
 
     public User handleCreateUser(User user) {
+        // check company
         if (user.getCompany() != null) {
-            Optional<Company> optionalCompany = this.companyService.findById(user.getCompany());
-            user.setCompany(optionalCompany.isPresent() ? optionalCompany.get() : null);
+            Optional<Company> companyOptional = this.companyService.findById(user.getCompany().getId());
+            user.setCompany(companyOptional.isPresent() ? companyOptional.get() : null);
         }
+
         return this.userRepository.save(user);
     }
 
