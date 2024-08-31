@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.request.ReqLoginDTO;
 import vn.hoidanit.jobhunter.domain.response.ResLoginDTO;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("/api/v1")
+@RequiredArgsConstructor
 public class AuthController {
 
      private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -36,15 +38,6 @@ public class AuthController {
 
      @Value("${hoidanit.jwt.refresh-token-validity-in-seconds}")
      private Long refreshTokenExpiration;
-
-     public AuthController(
-               AuthenticationManagerBuilder authenticationManagerBuilder,
-               SecurityUtil securityUtil,
-               UserService userService) {
-          this.authenticationManagerBuilder = authenticationManagerBuilder;
-          this.securityUtil = securityUtil;
-          this.userService = userService;
-     }
 
      @PostMapping("/auth/login")
      public ResponseEntity<ResLoginDTO> login(@Valid @RequestBody ReqLoginDTO loginDTO) {
@@ -63,12 +56,15 @@ public class AuthController {
           User currentUserDB = this.userService
                     .handleGetUserByUsername(loginDTO.getUsername());
           if (currentUserDB != null) {
-               ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(currentUserDB.getId(),
-                         currentUserDB.getEmail(), currentUserDB.getName());
+               ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(
+                         currentUserDB.getId(),
+                         currentUserDB.getEmail(),
+                         currentUserDB.getName(),
+                         currentUserDB.getRole());
                res.setUser(userLogin);
           }
 
-          String access_token = this.securityUtil.createAccessToken(authentication.getName(), res.getUser());
+          String access_token = this.securityUtil.createAccessToken(authentication.getName(), res);
 
           res.setAccess_token(access_token);
 
@@ -107,6 +103,7 @@ public class AuthController {
                userLogin.setId(currentUserDB.getId());
                userLogin.setEmail(currentUserDB.getEmail());
                userLogin.setName(currentUserDB.getName());
+               userLogin.setRole(currentUserDB.getRole());
 
                userGetAccount.setUser(userLogin);
           }
@@ -138,11 +135,11 @@ public class AuthController {
                     .handleGetUserByUsername(email);
           if (currentUserDB != null) {
                ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(currentUserDB.getId(),
-                         currentUserDB.getEmail(), currentUserDB.getName());
+                         currentUserDB.getEmail(), currentUserDB.getName(), currentUserDB.getRole());
                res.setUser(userLogin);
           }
 
-          String access_token = this.securityUtil.createAccessToken(email, res.getUser());
+          String access_token = this.securityUtil.createAccessToken(email, res);
 
           res.setAccess_token(access_token);
 
