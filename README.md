@@ -4,8 +4,7 @@ Template này được sử dụng cho series Java Spring Restful (dự án jobH
 ## Về tác giả
 Mọi thông tin về Tác giả Hỏi Dân IT, các bạn có thể tìm kiếm tại đây:
 
-Website chính thức: https://hoidanit.vn/
-
+Website chính thức: https://hoidanit.v
 Youtube “Hỏi Dân IT” : https://www.youtube.com/@hoidanit
 
 Tiktok “Hỏi Dân IT” :  https://www.tiktok.com/@hoidanit
